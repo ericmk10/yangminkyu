@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>양민규 · 학생 프로필</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void:      #0b1622;
+    --bg-panel:     #12233a;
+    --line-soft:    #24354c;
+    --ink-primary:  #e8eef5;
+    --ink-muted:    #8ca0b8;
+    --accent-gold:  #c9a227;
+    --warn:         #e2637a;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html, body{
+    height:100%;
+    margin:0;
+  }
+
+  body{
+    background:var(--bg-void);
+    color:var(--ink-primary);
+    font-family:'Pretendard', -apple-system, sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ---------- scroll-snap slide deck ---------- */
+  .deck{
+    height:100vh;
+    height:100dvh;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+    scroll-behavior:smooth;
+  }
+
+  .slide{
+    height:100vh;
+    height:100dvh;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    padding:0 min(9vw,72px);
+  }
+
+  /* scroll-linked fade: each slide fades in as it enters the viewport
+     and fades out as it leaves, instead of cutting abruptly */
+  @supports (animation-timeline: view()){
+    .slide{
+      animation: slide-fade linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+
+  @keyframes slide-fade{
+    0%{ opacity:0; transform:translateY(28px) scale(.98); }
+    32%{ opacity:1; transform:translateY(0) scale(1); }
+    68%{ opacity:1; transform:translateY(0) scale(1); }
+    100%{ opacity:0; transform:translateY(-28px) scale(.98); }
+  }
+
+  .slide-inner{
+    max-width:640px;
+    width:100%;
+  }
+
+  /* ---------- hero slide ---------- */
+  #hero{
+    align-items:flex-start;
+  }
+
+  #hero header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    width:100%;
+  }
+
+  .doc-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    color:var(--ink-muted);
+    white-space:nowrap;
+    padding-top:8px;
+  }
+
+  .name{
+    font-size:clamp(38px, 7vw, 60px);
+    font-weight:800;
+    line-height:1.15;
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+
+  .role{
+    margin:0 0 28px;
+    color:var(--ink-muted);
+    font-size:17px;
+  }
+
+  .scroll-cue{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    color:var(--ink-muted);
+  }
+
+  .scroll-cue .chevrons{
+    color:var(--accent-gold);
+    animation:bob 1.6s ease-in-out infinite;
+  }
+
+  @keyframes bob{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(4px); }
+  }
+
+  /* ---------- content slides ---------- */
+  .spec-section h2{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.08em;
+    color:var(--accent-gold);
+    margin:0 0 22px;
+    font-weight:600;
+  }
+
+  .spec-section h2 .kr{
+    font-family:'Pretendard', sans-serif;
+    color:var(--ink-primary);
+    letter-spacing:0;
+    font-weight:700;
+    font-size:22px;
+    margin-left:12px;
+  }
+
+  .field-table{
+    display:grid;
+    grid-template-columns:130px 1fr;
+    row-gap:10px;
+    column-gap:14px;
+    margin-bottom:20px;
+    font-size:15px;
+  }
+
+  .field-table dt{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--ink-muted);
+    font-size:12px;
+    letter-spacing:0.06em;
+    padding-top:2px;
+  }
+
+  .field-table dd{ margin:0; }
+
+  p.desc{
+    margin:0 0 4px;
+    color:var(--ink-primary);
+    font-size:16px;
+    max-width:56ch;
+  }
+
+  .tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:2px;
+  }
+
+  .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    padding:6px 11px;
+    border:1px solid var(--line-soft);
+    border-radius:3px;
+    background:var(--bg-panel);
+    color:var(--ink-primary);
+  }
+
+  .tags + p.desc{ margin-top:18px; }
+
+  /* ---------- photo slides: full-bleed photo background ---------- */
+  .photo-slide{ color:#fff; }
+
+  .photo-slide::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background-image:var(--bg-photo);
+    background-size:cover;
+    background-position:center;
+    z-index:0;
+  }
+
+  .photo-slide::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(100deg, rgba(6,12,20,0.92) 0%, rgba(6,12,20,0.78) 42%, rgba(6,12,20,0.4) 80%);
+    z-index:0;
+  }
+
+  .photo-slide .slide-inner{ position:relative; z-index:1; }
+
+  .photo-slide h2{ color:var(--accent-gold); }
+  .photo-slide .field-table dt{ color:#c7d3e0; }
+  .photo-slide p.desc{ color:#f1f5fa; }
+  .photo-slide .tag{ background:rgba(18,35,58,0.75); }
+
+  #p02{ --bg-photo:url('assets/campus.webp'); }
+  #p03{ --bg-photo:url('assets/반도체.webp'); }
+  #p04{ --bg-photo:url('assets/lg twins.webp'); }
+
+  /* ---------- fixed side nav rail ---------- */
+  .nav-rail{
+    position:fixed;
+    left:22px;
+    top:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:20px;
+    z-index:30;
+  }
+
+  .nav-rail::before{
+    content:'';
+    position:absolute;
+    top:6px;
+    bottom:6px;
+    left:50%;
+    width:2px;
+    background:var(--line-soft);
+    transform:translateX(-50%);
+    z-index:-1;
+  }
+
+  .nav-dot{
+    width:11px;
+    height:11px;
+    border-radius:50%;
+    border:2px solid var(--line-soft);
+    background:var(--bg-void);
+    cursor:pointer;
+    padding:0;
+    transition:border-color .25s ease, background .25s ease, transform .25s ease;
+  }
+
+  .nav-dot[data-active="true"]{
+    border-color:var(--accent-gold);
+    background:var(--accent-gold);
+    transform:scale(1.15);
+  }
+
+  .nav-dot:focus-visible{
+    outline:2px solid var(--accent-gold);
+    outline-offset:3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .deck{ scroll-behavior:auto; }
+    .scroll-cue .chevrons{ animation:none; }
+    .slide{ animation:none; opacity:1; transform:none; }
+  }
+
+  @media (max-width:640px){
+    .slide{ padding:0 24px; }
+    #hero header{ flex-direction:column; gap:4px; }
+    .doc-tag{ padding-top:0; }
+    .field-table{ grid-template-columns:1fr; row-gap:2px; }
+    .field-table dt{ margin-top:8px; }
+
+    .nav-rail{
+      left:50%;
+      top:auto;
+      bottom:16px;
+      transform:translateX(-50%);
+      flex-direction:row;
+      gap:16px;
+    }
+    .nav-rail::before{
+      top:50%;
+      bottom:auto;
+      left:6px;
+      right:6px;
+      width:auto;
+      height:2px;
+      transform:translateY(-50%);
+    }
+  }
+
+  :focus-visible{ outline:2px solid var(--accent-gold); outline-offset:2px; }
+</style>
+</head>
+<body>
+
+  <nav class="nav-rail" aria-label="섹션 이동">
+    <button class="nav-dot" data-target="p01" aria-label="01 프로필로 이동"></button>
+    <button class="nav-dot" data-target="p02" aria-label="02 진로 목표로 이동"></button>
+    <button class="nav-dot" data-target="p03" aria-label="03 관심 분야로 이동"></button>
+    <button class="nav-dot" data-target="p04" aria-label="04 취미로 이동"></button>
+  </nav>
+
+  <div class="deck">
+
+    <section class="slide" id="hero">
+      <div class="slide-inner">
+        <header>
+          <div>
+            <h1 class="name">양민규</h1>
+            <p class="role">전기전자공학을 목표로 하는 1학년 학생</p>
+          </div>
+          <span class="doc-tag">STUDENT<br>PROFILE</span>
+        </header>
+        <p class="scroll-cue"><span class="chevrons">⌄</span> SCROLL</p>
+      </div>
+    </section>
+
+    <section class="slide spec-section" id="p01">
+      <div class="slide-inner">
+        <h2>01 <span class="kr">프로필</span></h2>
+        <dl class="field-table">
+          <dt>NAME</dt><dd>양민규</dd>
+          <dt>SCHOOL</dt><dd>명덕고등학교</dd>
+          <dt>GRADE</dt><dd>1학년</dd>
+          <dt>STATUS</dt><dd>재학 중</dd>
+        </dl>
+        <p class="desc">명덕고등학교 1학년에 재학 중이며, 전기전자와 반도체 분야에 관심을 가지고 진로를 준비하고 있습니다.</p>
+      </div>
+    </section>
+
+    <section class="slide spec-section photo-slide" id="p02">
+      <div class="slide-inner">
+        <h2>02 <span class="kr">진로 목표</span></h2>
+        <dl class="field-table">
+          <dt>UNIVERSITY</dt><dd>연세대학교</dd>
+          <dt>DEPARTMENT</dt><dd>전기전자공학과</dd>
+          <dt>TARGET ROLE</dt><dd>연구원 (Researcher)</dd>
+        </dl>
+        <p class="desc">전기전자공학과에 진학해 전문 지식을 쌓고, 이후 반도체·전자 분야의 연구원으로 성장하는 것이 목표입니다.</p>
+      </div>
+    </section>
+
+    <section class="slide spec-section photo-slide" id="p03">
+      <div class="slide-inner">
+        <h2>03 <span class="kr">관심 분야</span></h2>
+        <div class="tags">
+          <span class="tag">전기전자공학</span>
+          <span class="tag">반도체공학</span>
+        </div>
+        <p class="desc">전기전자공학과 반도체공학의 기초 원리와 최신 기술 동향에 관심이 많고, 관련 지식을 꾸준히 넓혀가고 있습니다.</p>
+      </div>
+    </section>
+
+    <section class="slide spec-section photo-slide" id="p04">
+      <div class="slide-inner">
+        <h2>04 <span class="kr">취미</span></h2>
+        <dl class="field-table">
+          <dt>LIKES</dt><dd>야구</dd>
+          <dt>FAVORITE TEAM</dt><dd>LG 트윈스</dd>
+        </dl>
+        <p class="desc">야구를 좋아하며, LG 트윈스를 응원합니다.</p>
+      </div>
+    </section>
+
+  </div>
+
+<script>
+  const dots = Array.from(document.querySelectorAll('.nav-dot'));
+  const targets = dots.map(d => document.getElementById(d.dataset.target));
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      document.getElementById(dot.dataset.target).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const idx = targets.indexOf(entry.target);
+      if (idx === -1) return;
+      if (entry.isIntersecting && entry.intersectionRatio > 0.6){
+        dots.forEach(d => d.dataset.active = 'false');
+        dots[idx].dataset.active = 'true';
+      }
+    });
+  }, { threshold: [0.6] });
+
+  targets.forEach(t => observer.observe(t));
+</script>
+
+</body>
+</html>
