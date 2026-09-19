@@ -269,6 +269,18 @@
   #p03{ --bg-photo:url('assets/반도체.webp'); }
   #p04{ --bg-photo:url('assets/lg twins.webp'); }
 
+  /* light theme: drop the dark photo backgrounds so these slides don't
+     look like dark holes in an otherwise bright page */
+  :root[data-theme="light"] .photo-slide::before,
+  :root[data-theme="light"] .photo-slide::after{
+    display:none;
+  }
+
+  :root[data-theme="light"] .photo-slide{ color:var(--ink-primary); }
+  :root[data-theme="light"] .photo-slide .field-table dt{ color:var(--ink-muted); }
+  :root[data-theme="light"] .photo-slide p.desc{ color:var(--ink-primary); }
+  :root[data-theme="light"] .photo-slide .tag{ background:var(--bg-panel); }
+
   /* ---------- fixed side nav rail ---------- */
   .nav-rail{
     position:fixed;
